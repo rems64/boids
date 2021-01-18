@@ -1,6 +1,11 @@
 var width = 1000;
 var height = 1000;
 
+var size = {
+    length: 20,
+    width: 10
+}
+
 var borderMargin = {
     x: 10,
     y: 10
@@ -18,7 +23,7 @@ var boids = [];
 
 function spawnBoids()
 {
-    for(var i=0; i<10000; i++)
+    for(var i=0; i<100; i++)
     {
         //console.log(i)
         boids.push({
@@ -31,6 +36,21 @@ function spawnBoids()
             }
         })
     }
+}
+
+function drawBoid(ctx, boid) {
+    const angle = Math.atan2(boid.speed.y, boid.speed.x);
+    ctx.translate(boid.x, boid.y);
+    ctx.rotate(angle);
+    ctx.translate(-boid.x, -boid.y);
+    ctx.fillStyle = "#558cf4";
+    ctx.beginPath();
+    ctx.moveTo(boid.x + size.length, boid.y);
+    ctx.lineTo(boid.x, boid.y + size.width/2);
+    ctx.lineTo(boid.x, boid.y - size.width/2);
+    ctx.lineTo(boid.x + size.length, boid.y);
+    ctx.fill();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 function keepWithinBounds(boid) {
@@ -58,7 +78,7 @@ function distance(boid1, boid2)
 
 function getClosest(boid)
 {
-	var smallest = 100000;
+	var smallest = 1000;
 	var current;
 	for(var i in boids)
 	{
@@ -80,16 +100,6 @@ function computeBoids()
 	for(var i in boids)
 	{
 		keepWithinBounds(boids[i]);
-		/*
-		var output = getClosest(boids[i]);
-		var closest = output[0];
-		var dist = output[1];
-		if(dist<100)
-		{
-			boids[i].speed.x += closest.speed.x/50;
-			boids[i].speed.y += closest.speed.y/50;
-		}
-		*/
 	}
 }
 
@@ -120,7 +130,7 @@ function mainLoop()
     // Drawing go toujours brrrr
     for(var j in boids)
     {
-        ctx.fillRect(boids[j].x, boids[j].y, 3, 3);
+        drawBoid(ctx, boids[j]);
     }
     count+=1;
     window.requestAnimationFrame(mainLoop);
